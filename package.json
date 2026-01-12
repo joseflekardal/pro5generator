@@ -1,9 +1,6 @@
 {
   "name": "pro5generator",
   "version": "1.0.0",
-  "engines": {
-    "node": "8.9.0"
-  },
   "description": "",
   "main": "index.js",
   "scripts": {
