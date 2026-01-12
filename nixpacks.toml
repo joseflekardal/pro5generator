@@ -1,9 +1,11 @@
 [phases.setup]
 # Use an available Node version in nixpkgs (22_x isn't present on this channel).
 nixPkgs = ["nodejs_20"]
+# Install system packages needed for native module compilation (libxmljs)
+aptPkgs = ["python3", "make", "g++", "libxml2-dev", "pkg-config"]
 
 [phases.install]
-cmds = ["npm ci"]
+cmds = ["PYTHON=python3 npm ci"]
 
 # Build phase ensures bower dependencies and browserify bundle are created
 # (postinstall also runs these, but being explicit ensures they run even if postinstall is skipped)
