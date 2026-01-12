@@ -1,5 +1,6 @@
 [phases.setup]
-nixPkgs = ["nodejs-22_x"]
+# Use an available Node version in nixpkgs (22_x isn't present on this channel).
+nixPkgs = ["nodejs_20"]
 
 [phases.install]
 cmds = ["npm ci"]
