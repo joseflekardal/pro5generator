@@ -1,0 +1,13 @@
+[phases.setup]
+nixPkgs = ["nodejs-22_x"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+# Build phase ensures bower dependencies and browserify bundle are created
+# (postinstall also runs these, but being explicit ensures they run even if postinstall is skipped)
+[phases.build]
+cmds = ["npm run bower-install", "npm run build"]
+
+[start]
+cmd = "node ."
