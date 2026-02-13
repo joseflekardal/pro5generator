@@ -1,124 +1,264 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Pro5/6 Generator</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pro5/6 Generator</title>
 
-	<!-- Bootstrap -->
-	<script src="/lib/angular/angular.min.js"></script>
-	<script src="/lib/angular-ui-router/release/angular-ui-router.min.js"></script>
-	<script src="/lib/angular-animate/angular-animate.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="/lib/angular/angular.min.js"></script>
+    <script src="/lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script src="/lib/angular-animate/angular-animate.min.js"></script>
 
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-	<![endif]-->
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
-	<link rel="stylesheet" href="/lib/normalize.css/normalize.css">
-	<link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/lib/normalize.css/normalize.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .migration-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+      .migration-modal-overlay.show {
+        display: flex;
+      }
+      .migration-modal {
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        max-width: 600px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        position: relative;
+      }
+      .migration-modal h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+      .migration-modal p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+      .migration-modal a {
+        display: inline-block;
+        background: #0056b3;
+        color: white;
+        padding: 12px 30px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+      .migration-modal a:hover {
+        background: #003d82;
+      }
+      .migration-modal .button-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .migration-modal .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: #999;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+      }
+      .migration-modal .close-btn:hover {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="migration-modal-overlay" id="migrationModal">
+      <div class="migration-modal">
+        <button class="close-btn" onclick="closeMigrationModal()">
+          &times;
+        </button>
+        <h2>⚠️ Viktigt meddelande</h2>
+        <p>
+          Denna gamla version av ProPresenter Generator kommer att tas bort inom
+          en månad.<br /><br />
+          Vänligen byt till den nya versionen och spara genvägen för framtida
+          användning.
+        </p>
+        <div class="button-container">
+          <a href="https://jethro.hillsong.se/propresenter" target="_blank">
+            Gå till nya versionen
+          </a>
+        </div>
+      </div>
+    </div>
 
-<div ui-view id="container"><div id="loading-app">Loading...</div></div>
+    <div ui-view id="container"><div id="loading-app">Loading...</div></div>
 
+    <script>
+      // Show migration modal on page load (always)
+      window.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+          document.getElementById("migrationModal").classList.add("show");
+        }, 500);
+      });
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="/lib/jquery/dist/jquery.min.js"></script>
-<script src="/lib/lodash/lodash.min.js"></script>
-<!--<script src="bundle.js"></script>-->
-<script src="/lib/requirejs/require.js"></script>
-<script>
-	requirejs(['bundle'], function(Parser) {
-		angular
-				.module('pro5App', ['ui.router', 'ngAnimate'])
-				.run(function () {
-					$('#loading-app').hide();
-				})
-				.config(function($stateProvider, $urlRouterProvider) {
-					$urlRouterProvider.otherwise('/missing');
+      function closeMigrationModal() {
+        document.getElementById("migrationModal").classList.remove("show");
+      }
 
+      // Close modal when clicking outside of it
+      document.addEventListener("click", function (event) {
+        const modal = document.getElementById("migrationModal");
+        if (event.target === modal) {
+          closeMigrationModal();
+        }
+      });
+    </script>
 
-					//
-					// Now set up the states
-					$stateProvider
-							.state('editor', {
-								url: '/editor/:account/:template',
-								controller: 'Pro5Controller as pro5Ctrl',
-								templateUrl: 'partial/editor.html',
-								resolve: {
-									example: function($http) {
-										return $http.get('help/example.txt');
-									},
-									templates: function($http, $stateParams) {
-										return $http.get('template?account=' + $stateParams.account);
-									}
-								}
-							})
-							.state('help', {
-								url: '/editor/:account/:template/help',
-								templateUrl: 'partial/help.html',
-								controller: 'HelpController as helpCtrl',
-								resolve: {
-									example: function($http) {
-										return $http.get('help/example.txt');
-									}
-								}
-							})
-							.state('missing', {
-								url: '/missing',
-								controller: function () {
-									alert('Sorry this link does not exist, please check it again or contact support.');
-								}
-							});
-				})
-				.controller('HelpController', function($http, $stateParams, example) {
-					this.account = $stateParams.account;
-					this.template = $stateParams.template;
-					this.example = example.data;
-				})
-				.controller('Pro5Controller', function($http, $stateParams, templates, example) {
-					var _this = this;
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/lodash/lodash.min.js"></script>
+    <!--<script src="bundle.js"></script>-->
+    <script src="/lib/requirejs/require.js"></script>
+    <script>
+      requirejs(["bundle"], function (Parser) {
+        angular
+          .module("pro5App", ["ui.router", "ngAnimate"])
+          .run(function () {
+            $("#loading-app").hide();
+          })
+          .config(function ($stateProvider, $urlRouterProvider) {
+            $urlRouterProvider.otherwise("/missing");
 
-					_this.templates = templates.data;
-					_this.account = $stateParams.account;
-					_this.template = $stateParams.template ? $stateParams.template : _this.templates[0];
-					_this.templateExt = _this.template.match(/\.pro[56]$/)[0]
+            //
+            // Now set up the states
+            $stateProvider
+              .state("editor", {
+                url: "/editor/:account/:template",
+                controller: "Pro5Controller as pro5Ctrl",
+                templateUrl: "partial/editor.html",
+                resolve: {
+                  example: function ($http) {
+                    return $http.get("help/example.txt");
+                  },
+                  templates: function ($http, $stateParams) {
+                    return $http.get(
+                      "template?account=" + $stateParams.account,
+                    );
+                  },
+                },
+              })
+              .state("help", {
+                url: "/editor/:account/:template/help",
+                templateUrl: "partial/help.html",
+                controller: "HelpController as helpCtrl",
+                resolve: {
+                  example: function ($http) {
+                    return $http.get("help/example.txt");
+                  },
+                },
+              })
+              .state("missing", {
+                url: "/missing",
+                controller: function () {
+                  alert(
+                    "Sorry this link does not exist, please check it again or contact support.",
+                  );
+                },
+              });
+          })
+          .controller(
+            "HelpController",
+            function ($http, $stateParams, example) {
+              this.account = $stateParams.account;
+              this.template = $stateParams.template;
+              this.example = example.data;
+            },
+          )
+          .controller(
+            "Pro5Controller",
+            function ($http, $stateParams, templates, example) {
+              var _this = this;
 
-					if (localStorage.getItem('lastText')) {
-						_this.text = localStorage.getItem('lastText');
-					} else {
-						_this.text = example.data;
-					}
+              _this.templates = templates.data;
+              _this.account = $stateParams.account;
+              _this.template = $stateParams.template
+                ? $stateParams.template
+                : _this.templates[0];
+              _this.templateExt = _this.template.match(/\.pro[56]$/)[0];
 
-					_this.referenceCaps = false;
-					_this.verseCaps = false;
-					_this.parsed = Parser.parseText(_this.text, _this.referenceCaps, _this.verseCaps);
+              if (localStorage.getItem("lastText")) {
+                _this.text = localStorage.getItem("lastText");
+              } else {
+                _this.text = example.data;
+              }
 
-					_this.referenceChangeCaps = function(value) { _this.referenceCaps = value; _this.textChanged(_this.text); };
-					_this.verseChangeCaps = function(value) { _this.verseCaps = value; _this.textChanged(_this.text); };
+              _this.referenceCaps = false;
+              _this.verseCaps = false;
+              _this.parsed = Parser.parseText(
+                _this.text,
+                _this.referenceCaps,
+                _this.verseCaps,
+              );
 
-					_this.textChanged = function(newValue) {
-						localStorage.setItem('lastText', newValue);
-						_this.parsed = Parser.parseText(newValue, { referenceCaps: _this.referenceCaps, verseCaps: _this.verseCaps});
-					};
+              _this.referenceChangeCaps = function (value) {
+                _this.referenceCaps = value;
+                _this.textChanged(_this.text);
+              };
+              _this.verseChangeCaps = function (value) {
+                _this.verseCaps = value;
+                _this.textChanged(_this.text);
+              };
 
-					_this.download = function() {
-						$http.post('/download', { account: _this.account, template: _this.template, parsed: _this.parsed }).success(function(r) {
-							location = r.url;
-						}).error(function(err) {
-							alert('An error occured, sorry.');
-						});
-					};
-				});
+              _this.textChanged = function (newValue) {
+                localStorage.setItem("lastText", newValue);
+                _this.parsed = Parser.parseText(newValue, {
+                  referenceCaps: _this.referenceCaps,
+                  verseCaps: _this.verseCaps,
+                });
+              };
 
-		angular.bootstrap(document, ['pro5App']);
-	});
+              _this.download = function () {
+                $http
+                  .post("/download", {
+                    account: _this.account,
+                    template: _this.template,
+                    parsed: _this.parsed,
+                  })
+                  .success(function (r) {
+                    location = r.url;
+                  })
+                  .error(function (err) {
+                    alert("An error occured, sorry.");
+                  });
+              };
+            },
+          );
 
-</script>
-
-</body>
+        angular.bootstrap(document, ["pro5App"]);
+      });
+    </script>
+  </body>
 </html>
